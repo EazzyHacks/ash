@@ -1,8 +1,8 @@
 let handler = async (m, { conn }) => {
     let chat = global.db.data.chats[m.chat]
-    if (chat.setprecios) {
-        let precios = chat.setprecios;
-        await conn.reply(m.chat, precios, m);
+    if (chat.setstock1) {
+        let stock1 = chat.setstock1;
+        await conn.reply(m.chat, stock1, m);
     } else {
         m.reply(`> Actualiza Tu Lista De Precios Con .setstock1`);
     }
