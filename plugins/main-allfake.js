@@ -41,13 +41,13 @@ var handler = async function (m, conn, db) {
     let pushname = m.pushName || 'Sin nombre'
 
     // Datos generales del bot
-    let creador = 'Wa.me/51936994155'
+    let creador = 'Wa.me/5215639557297'
     let ofcbot = conn.user.jid.split('@')[0]
-    let asistencia = 'Wa.me/51936994155'
+    let asistencia = 'Wa.me/5215639557297'
 
     // Lista de canales
     let canalIdM = ["120363419947391620@newsletter", "120363419947391620@newsletter"]
-    let canalNombreM = ["Eazzy - Ultra 🤍", "Eazzy - Referencias 🤍"]
+    let canalNombreM = ["Ash - Ultra 🤍", "Ash - Referencias 🤍"]
     
     async function getRandomChannel() {
         let randomIndex = Math.floor(Math.random() * canalIdM.length)
@@ -104,10 +104,10 @@ var handler = async function (m, conn, db) {
             externalAdReply: { 
                 showAdAttribution: true, 
                 title: "Texto del bot", 
-                body: 'Eazzy - Ultra 🤍', 
+                body: 'Ash - Ultra 🤍', 
                 previewType: "PHOTO", 
-                thumbnailUrl: "https://qu.ax/cqUYc.jpg", 
-                sourceUrl: "https://whatsapp.com/channel/0029Vb5oUp43LdQUVViHwc0m", 
+                thumbnailUrl: "https://qu.ax/EebvE.jpeg", 
+                sourceUrl: "https://chat.whatsapp.com/IWbZfzvPNZB359FmjMBi0V?mode=ac_t", 
                 mediaType: 1, 
                 renderLargerThumbnail: false 
             }
