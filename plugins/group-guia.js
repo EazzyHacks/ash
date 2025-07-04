@@ -1,8 +1,8 @@
 
 let handler = async (m, { conn}) => {
-  const img = 'https://qu.ax/ARhkT.jpg';
+  const img = 'https://qu.ax/EebvE.jpeg';
   const texto = `
-🔱 *XITERS BOT GUIA* 🔱
+🔱 *ASH BOT GUIA* 🔱
 
 🛠️ *Comandos útiles para grupos:*
 
@@ -20,7 +20,7 @@ let handler = async (m, { conn}) => {
 📜 _.menu_ — Ver todos los comandos
 
 🧩 ¿Tienes dudas o sugerencias?
-📬 wa.me/51936994155
+📬 wa.me/5215639557297
 `;
 
   const fkontak = {
@@ -32,7 +32,7 @@ let handler = async (m, { conn}) => {
 },
     message: {
       contactMessage: {
-        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Miku;Bot;;;\nFN:Xiters Bot🔱\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Celular\nEND:VCARD`
+        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Miku;Bot;;;\nFN:Ash Bot🔱\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Celular\nEND:VCARD`
 }
 },
     participant: '0@s.whatsapp.net'
