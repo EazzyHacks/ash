@@ -3,7 +3,7 @@ import { generateWAMessageFromContent} from '@whiskeysockets/baileys';
 const handler = async (m, { conn, text, participants}) => {
   try {
     const users = participants.map(u => conn.decodeJid(u.id));
-    const sello = '\n\n𝗔𝘀𝗵 𝗕𝗼𝘁 🤍\nhttps://chat.whatsapp.com/IWbZfzvPNZB359FmjMBi0V?mode=ac_t';
+    const sello = '\n\n𝗔𝘀𝗵 𝗕𝗼𝘁 🤍';
 
     const q = m.quoted? m.quoted: m;
     const c = m.quoted? await m.getQuotedObj(): m;
