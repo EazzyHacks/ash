@@ -18,7 +18,7 @@ return list[Math.floor(list.length * Math.random())]
   for (const mem of participants) {
     teks += `│🤖 @${mem.id.split('@')[0]}\n`;
   }
-  teks += `│\n╰𝗘𝗮𝘇𝘇𝘆 𝗫 🤖`;
+  teks += `│\n╰𝗔𝘀𝗵 𝗕𝗼𝘁 🤖`;
   conn.sendMessage(m.chat, {text: teks, mentions: participants.map((a) => a.id)} );
 };
 handler.help = ['tagall <mesaje>', 'invocar <mesaje>'];
