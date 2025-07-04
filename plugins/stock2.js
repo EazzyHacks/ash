@@ -9,7 +9,7 @@ let handler = async (m, { conn }) => {
 }
 handler.command = ['stock2'];
 handler.help = ["stock2 < Stock Seguidores >"];
-handler.tags = ["venta"];
+handler.tags = ["ventas"];
 handler.group = true;
 handler.botAdmin = false;
 
