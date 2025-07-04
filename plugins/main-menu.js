@@ -21,7 +21,7 @@ let Styles = (text, style = 1) => {
   return output.join('');
 };
 let tags = {
-  'ventas':  '🤍 ᴇᴀᴢᴢʏ x ᴠᴇɴᴛᴀꜱ 🤍',
+  'ventas':  '🤍 ᴀꜱʜ ʙᴏᴛ ᴠᴇɴᴛᴀꜱ 🤍',
   'freefire':  '🎮 ꜰʀᴇᴇ ꜰɪʀᴇ 🎇',
   'freefireeu':  '🤍 ꜰʀᴇᴇ ꜰɪʀᴇ ᴇᴜ 🎮',
   'main': '❗ ɪɴꜰᴏ ❕',
@@ -48,15 +48,15 @@ let tags = {
 
 const defaultMenu = {
   before:  `
-╔══════ •『 ɪɴꜰᴏ ᴇᴀᴢᴢʏ x 』
-║ 🖥️ ᴄʀᴇᴀᴅᴏʀ : @Kcha.Mobiles
+╔══════ •『 ɪɴꜰᴏ ᴀꜱʜ x 』
+║ 🖥️ ᴄʀᴇᴀᴅᴏʀ : @ashesitaaa
 ║ 👤 ᴄʟɪᴇɴᴛᴇ : %name
 ║ ⭐ ᴇxᴘ : %exp
 ║ ⚡ ɴɪᴠᴇʟ : %level
 ╚═════ ♢.✰.♢ ═══════
 
 ╔══════ •『 ɪɴꜰᴏ ᴜꜱᴇʀ 』
-║ 🤖 ʙᴏᴛ : ©Eazzy X Bot
+║ 🤖 ʙᴏᴛ : ©Ash Bot
 ║ 💎 ᴍᴏᴅᴏ : Privado
 ║ 💨 ʙᴀɪʟᴇʏꜱ : Multi Device
 ║ 🎩 ᴜꜱᴜᴀʀɪᴏꜱ : %totalreg 
@@ -172,23 +172,23 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
    }
     text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
 
-    let pp = 'https://qu.ax/cqUYc.jpg'
-    let pp2 = 'https://qu.ax/cqUYc.jpg'
-    let pp3 = 'https://qu.ax/cqUYc.jpg'
-    let pp4 = 'https://qu.ax/cqUYc.jpg'
-    let pp5 = 'https://qu.ax/cqUYc.jpg'
-    let pp6 = 'https://qu.ax/cqUYc.jpg'
-    let pp7 = 'https://qu.ax/cqUYc.jpg'
-    let pp8 = 'https://qu.ax/cqUYc.jpg'
-    let pp9 = 'https://qu.ax/cqUYc.jpg'
-    let pp10 = 'https://qu.ax/cqUYc.jpg'
-    let pp11 = 'https://qu.ax/cqUYc.jpg'
-    let pp12 = 'https://qu.ax/cqUYc.jpg'
-    let pp13 = 'https://qu.ax/cqUYc.jpg'
-    let pp14 = 'https://qu.ax/cqUYc.jpg'
-    let pp15 = 'https://qu.ax/cqUYc.jpg'
-    let img = 'https://qu.ax/cqUYc.jpg'
-    let img2 = 'https://qu.ax/cqUYc.jpg'
+    let pp = 'https://qu.ax/EebvE.jpeg'
+    let pp2 = 'https://qu.ax/EebvE.jpeg'
+    let pp3 = 'https://qu.ax/EebvE.jpeg'
+    let pp4 = 'https://qu.ax/EebvE.jpeg'
+    let pp5 = 'https://qu.ax/EebvE.jpeg'
+    let pp6 = 'https://qu.ax/EebvE.jpeg'
+    let pp7 = 'https://qu.ax/EebvE.jpeg'
+    let pp8 = 'https://qu.ax/EebvE.jpeg'
+    let pp9 = 'https://qu.ax/EebvE.jpeg'
+    let pp10 = 'https://qu.ax/EebvE.jpeg'
+    let pp11 = 'https://qu.ax/EebvE.jpeg'
+    let pp12 = 'https://qu.ax/EebvE.jpeg'
+    let pp13 = 'https://qu.ax/EebvE.jpeg'
+    let pp14 = 'https://qu.ax/EebvE.jpeg'
+    let pp15 = 'https://qu.ax/EebvE.jpeg'
+    let img = 'https://qu.ax/EebvE.jpeg'
+    let img2 = 'https://qu.ax/EebvE.jpeg'
     await m.react('⭐')
    // await conn.sendMessage(m.chat, { video: { url: [pp, pp2, pp3, pp4, pp5, pp6, pp7, pp8, pp9, pp10, pp11, pp12, pp13, pp14, pp15].getRandom() }, gifPlayback: true, caption: text.trim(), mentions: [m.sender] }, { quoted: estilo })
     await conn.sendFile(m.chat, img, 'thumbnail.jpg', text.trim(), m, null, rcanal)
