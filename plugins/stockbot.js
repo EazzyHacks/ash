@@ -8,7 +8,7 @@ let handler = async (m, { conn }) => {
     }
 }
 handler.command = ['stock1'];
-handler.help = ["stock1"];
+handler.help = ["stock1 < stock bot >"];
 handler.tags = ["venta"];
 handler.group = true;
 handler.admin = true;
