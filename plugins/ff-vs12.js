@@ -64,7 +64,7 @@ handler.help = ['vs12']
 handler.tags = ['freefire']
 handler.command = /^(vs12)$/i;
 handler.botAdmin = false;
-handler.admin = true;
-handler.group = true;
+handler.admin = false;
+handler.group = false;
 
 export default handler
