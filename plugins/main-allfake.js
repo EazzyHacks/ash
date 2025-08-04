@@ -106,7 +106,7 @@ var handler = async function (m, conn, db) {
                 title: "Texto del bot", 
                 body: 'Ash - Ultra 🤍', 
                 previewType: "PHOTO", 
-                thumbnailUrl: "https://qu.ax/EebvE.jpeg", 
+                thumbnailUrl: "https://qu.ax/nXGTW.jpeg", 
                 sourceUrl: "https://chat.whatsapp.com/IWbZfzvPNZB359FmjMBi0V?mode=ac_t", 
                 mediaType: 1, 
                 renderLargerThumbnail: false 
