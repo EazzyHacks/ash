@@ -1,59 +1,67 @@
-import fetch from "node-fetch";
+import fetch from 'node-fetch';
 
-const handler = async (m, { conn, text, args }) => {
-  try {
-    if (!args[0]) {
-      return conn.reply(m.chat, `🌸 ¡Hola! Para descargar un video de TikTok, por favor envía el enlace. Ejemplo:\n\n*!tiktok* https://vm.tiktok.com/ZM81b3wQJ/`, m);
+const handler = async (m, { conn, text, command }) => {
+    if (!text) {
+        return conn.reply(m.chat, '❌ ¡Necesito un enlace de TikTok! Por favor, proporciona uno después del comando.', m);
     }
 
-    if (!/(?:https?:\/\/)?(?:www\.|vm\.|vt\.|t)?\.?tiktok\.com\/[^\s&]+/i.test(text)) {
-      return conn.reply(m.chat, `❌ Ups, el enlace de TikTok que me diste no es válido. ¡Intenta con otro!`, m);
+    if (!text.match(/(tiktok\.com\/|vt\.tiktok\.com\/)/i)) {
+        return conn.reply(m.chat, '🤔 Parece que el enlace no es de TikTok. Por favor, asegúrate de enviar un enlace válido.', m);
     }
 
-    m.react('⏳');
+    try {
+        const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(text)}`;
+        const response = await fetch(apiUrl);
+        const result = await response.json();
 
-    let res = await fetch(`https://api.sylphy.xyz/download/tiktok?url=${args[0]}&apikey=sylphy`);
-    let json = await res.json();
+        if (!result || result.code !== 0 || !result.data || (!result.data.play && !result.data.wmplay)) {
+            let errorMessage = '❌ No pude descargar el video. Asegúrate de que el enlace sea correcto, público y esté disponible.';
+            if (result && result.msg) {
+                errorMessage += `\nDetalles: ${result.msg}`;
+            }
+            return conn.reply(m.chat, errorMessage, m);
+        }
 
-    if (!json.status) {
-      throw new Error('Lo siento, no pude obtener el contenido de TikTok. ¡Quizás el enlace no está disponible!');
-    }
+        const videoUrl = result.data.play;
+        const videoUrlNoWm = result.data.wmplay;
 
-    let { title, duration, author } = json.data;
-    let dl = json.dl;
-    let type = json.type;
+        const finalVideoUrl = videoUrlNoWm || videoUrl;
 
-    let caption = `
-✨ *¡TikTok Descargado con Éxito!* ✨
+        if (!finalVideoUrl) {
+            return conn.reply(m.chat, '❌ No se encontró una URL de video descargable en la respuesta de TikTok.', m);
+        }
 
-┌  ◦  👤 *Autor:* ${author || 'Desconocido'}
-│  ◦  📌 *Título:* ${title || 'Sin título'}
-└  ◦  ⏱️ *Duración:* ${duration ? `${duration} segundos` : 'Desconocida'}
+        const author = result.data.author?.nickname || 'Desconocido';
+        const description = result.data.title || 'Sin descripción';
+        const duration = result.data.duration ? formatDuration(result.data.duration) : 'N/A';
+        const size = result.data.size ? `${(result.data.size / (1024 * 1024)).toFixed(2)} MB` : 'N/A';
+
+        const caption = `
+✅ *TikTok descargado:*
+
+👤 *Autor:* ${author}
+📝 *Descripción:* ${description}
+⏳ *Duración:* ${duration}
+📏 *Tamaño:* ${size}
 `;
 
-    if (type === 'video') {
-      await conn.sendFile(m.chat, dl.url, 'tiktok.mp4', caption, m);
-    } else if (type === 'image') {
-      if (Array.isArray(dl.url)) {
-        for (let i = 0; i < dl.url.length; i++) {
-          await conn.sendFile(m.chat, dl.url[i], `tiktok_image_${i + 1}.jpg`, i === 0 ? caption : '', m);
-        }
-      } else {
-        await conn.sendFile(m.chat, dl.url, 'tiktok_image.jpg', caption, m);
-      }
-    } else {
-      throw new Error('¡Ups! Este tipo de contenido de TikTok aún no es compatible.');
+        await conn.sendMessage(m.chat, {
+            video: { url: finalVideoUrl },
+            caption: caption,
+        }, { quoted: m });
+
+    } catch (error) {
+        console.error('Error al descargar TikTok:', error);
+        conn.reply(m.chat, '❌ ¡Oops! Algo salió mal al intentar descargar el video. Intenta de nuevo más tarde.', m);
     }
-
-    m.react('✅');
-  } catch (e) {
-    console.error(e);
-
-    return conn.reply(m.chat,`💔 ¡Oh no! Ha ocurrido un error al procesar tu solicitud: ${e.message}\n\nPor favor, inténtalo de nuevo más tarde o verifica el enlace.`, m);
-  }
 };
 
-handler.help = ["tiktok"];
-handler.tags = ["descargas"];
-handler.command = ["tt", "tiktok", "ttdl"];
+function formatDuration(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
+
+handler.command = /^(tiktok|tt)$/i;
+
 export default handler;

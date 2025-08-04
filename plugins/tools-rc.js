@@ -1,4 +1,3 @@
-
 let handler = async (m, { args, text, command, conn }) => {
     if (!args[0]) {
         return m.reply(`💨 ¡Hola! Para reaccionar a un mensaje, usa el siguiente formato:\n${command} https://whatsapp.com/channel/... ¡Hola, amigos! 🎉`);
@@ -25,7 +24,7 @@ let handler = async (m, { args, text, command, conn }) => {
     try {
         const link = args[0];
         const parts = link.split('/');
-        
+
         if (parts.length < 6) {
             return m.reply("❌ El enlace proporcionado no es válido. Asegúrate de que contenga todos los componentes necesarios.");
         }

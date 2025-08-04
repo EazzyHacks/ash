@@ -49,7 +49,7 @@ const handler = async (m, { conn, text, command }) => {
     }
 }
 
-handler.help = ["play1", "play2"];
+handler.help = ["play1", "play3"];
 handler.tags = ["download"];
-handler.command = ["play1", "play2", "playvid"];
+handler.command = ["play1", "play3", "playvid"];
 export default handler;

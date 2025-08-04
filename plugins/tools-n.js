@@ -1,46 +1,71 @@
+import axios from 'axios'
+import FormData from 'form-data'
 
-const subbotConfig = {};
-
-const handler = async (m, { conn, args, command}) => {
-    const subbotId = m.sender;
-
-    if (!subbotConfig[subbotId]) {
-        subbotConfig[subbotId] = {
-            name: 'Subbot',
-            color: 'blue',
-            style: 'normal',
-            description: 'Soy un subbot listo para ayudarte.'
-};
+const detectorTextoIA = {
+  analizar: async (texto) => {
+    if (texto.length === 20000) {
+      throw new Error("📛 Tu texto es demasiado largo 😂, máximo 20000 caracteres")
 }
 
-    if (command === 'newname') {
-        if (!args[0]) return m.reply('❌ *Error:* Debes escribir el nuevo nombre después de `.newname`.');
-        subbotConfig[subbotId].name = args.join(' ');
-        return m.reply(`✅ *¡Nombre cambiado con éxito!* 📌 Nuevo nombre: *${subbotConfig[subbotId].name}*`);
+    const formulario = new FormData()
+    formulario.append("content", texto)
+
+    const encabezados = {
+      headers: {
+...formulario.getHeaders(),
+        "Product-Serial": "808e957638180b858ca40d9c3b9d5bd3"
+}
 }
 
-    if (command === 'setcolor') {
-        if (!args[0]) return m.reply('❌ *Error:* Especifica un color después de `.setcolor`.');
-        subbotConfig[subbotId].color = args[0].toLowerCase();
-        return m.reply(`✅ *¡Color del texto actualizado!* 🎨 Nuevo color: *${subbotConfig[subbotId].color}*`);
+    const encabezadoConsulta = {
+      headers: {
+        "Product-Serial": "808e957638180b858ca40d9c3b9d5bd3"
+}
 }
 
-    if (command === 'setstyle') {
-        if (!args[0]) return m.reply('❌ *Error:* Especifica un estilo después de `.setstyle`.');
-        subbotConfig[subbotId].style = args[0].toLowerCase();
-        return m.reply(`✅ *¡Estilo del texto actualizado!* ✍️ Nuevo estilo: *${subbotConfig[subbotId].style}*`);
+    const { data: crearTrabajo} = await axios.post(
+      "https://api.decopy.ai/api/decopy/ai-detector/create-job",
+      formulario,
+      encabezados
+)
+
+    const jobId = crearTrabajo.result.job_id
+
+    const { data: resultadoProceso} = await axios.get(
+      `https://api.decopy.ai/api/decopy/ai-detector/get-job/${jobId}`,
+      encabezadoConsulta
+)
+
+    const salida = resultadoProceso.result.output
+
+    const resultadoFormateado = salida.sentences.map((frase, i) => ({
+      no: i + 1,
+      frase: frase.content.trim(),
+      puntuación: Number(frase.score.toFixed(3)),
+      estado: frase.status === 1? "GENERADO_POR_IA": "GENERADO_POR_HUMANO"
+}))
+
+    return resultadoFormateado
+}
 }
 
-    if (command === 'setdescription') {
-        if (!args[0]) return m.reply('❌ *Error:* Escribe una descripción después de `.setdescription`.');
-        subbotConfig[subbotId].description = args.join(' ');
-        return m.reply(`✅ *¡Descripción personalizada guardada!* 📜 Nueva descripción: *${subbotConfig[subbotId].description}*`);
+// Manejador para comandos
+let handler = async (m, { conn, text, usedPrefix, command}) => {
+  if (!text) throw `✏️ Ejemplo de uso: ${usedPrefix}${command} Hola, soy Chat GPT`
+  m.reply('⏳ Analizando tu texto...')
+  try {
+    const resultado = await detectorTextoIA.analizar(text)
+    let salida = resultado.map(r =>
+      `📍 Número: ${r.no}\n🗨️ Frase: ${r.frase}\n📊 Puntuación: ${r.puntuación}\n🔎 Estado: ${r.estado}`
+).join('\n\n')
+    m.reply(salida)
+} catch (err) {
+    m.reply(`❌ Error: ${err.message}`)
+}
 }
 
-    if (command === 'profileinfo') {
-        return m.reply(`📌 *Perfil de tu subbot:*\n📢 *Nombre:* ${subbotConfig[subbotId].name}\n🎨 *Color:* ${subbotConfig[subbotId].color}\n✍️ *Estilo:* ${subbotConfig[subbotId].style}\n📜 *Descripción:* ${subbotConfig[subbotId].description}`);
-}
-};
+handler.help = ['aidetector <texto>']
+handler.tags = ['ai']
+handler.command = ['aidetector']
 
-handler.command = /^(|setcolor|setstyle|setdescription|profileinfo)$/i;
-export default handler;
+export default handler

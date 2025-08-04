@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 const handler = async (m, { conn, args, command, usedPrefix, text }) => {
     // Verificar si el comando NSFW está habilitado en el grupo
@@ -24,7 +24,7 @@ const handler = async (m, { conn, args, command, usedPrefix, text }) => {
 };
 
 handler.command = ['xvideosdl'];
-handler.register = true;
+handler.register = false;
 handler.group = false;
 
 export default handler;

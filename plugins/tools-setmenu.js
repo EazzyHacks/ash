@@ -1,36 +1,134 @@
+import axios from 'axios'
+import { v4 as uuidv4} from 'uuid'
+import readline from 'readline'
 
-import { downloadContentFromMessage} from '@whiskeysockets/baileys';
-import fs from 'fs';
+let handler = async (m, { conn, text, usedPrefix, command}) => {
+  try {
+    if (!text.includes('|')) return m.reply(`Ejemplo de uso:\n.sonu título | letra | estado de ánimo | género | voz`)
+    let [titulo, letra, estado, genero, voz] = text.split('|').map(v => v.trim())
 
-const handler = async (m, { conn}) => {
-    try {
-        // Verificar si el mensaje citado es una imagen
-        if (!m.quoted ||!m.quoted.mimetype ||!m.quoted.mimetype.startsWith('image/')) {
-            return m.reply('❌ *Error:* Responde a una imagen con el comando `.setmenu` para cambiar la imagen del menú.');
+    if (!titulo) return m.reply('⚠️ El título de la canción no puede estar vacío.')
+    if (!letra) return m.reply('⚠️ Falta la letra de la canción.')
+    if (letra.length> 1500) return m.reply('⚠️ La letra no puede superar los 1500 caracteres.')
+
+    m.reply('⏳ Generando canción, espera un momento...')
+
+    const deviceId = uuidv4()
+    const userHeaders = {
+      'user-agent': 'NB Android/1.0.0',
+      'content-type': 'application/json',
+      'accept': 'application/json',
+      'x-platform': 'android',
+      'x-app-version': '1.0.0',
+      'x-country': 'VE',
+      'accept-language': 'es-ES',
+      'x-client-timezone': 'America/Caracas',
 }
 
-        // Descargar la imagen adjunta
-        const media = await downloadContentFromMessage(m.quoted, 'image');
-        let buffer = Buffer.from([]);
-        for await (const chunk of media) {
-            buffer = Buffer.concat([buffer, chunk]);
+    const msgId = uuidv4()
+    const time = Date.now().toString()
+
+    const registerHeaders = {
+...userHeaders,
+      'x-device-id': deviceId,
+      'x-request-id': msgId,
+      'x-message-id': msgId,
+      'x-request-time': time
 }
 
-        // Guardar la imagen en una ubicación accesible
-        const path = './menu.jpg';
-        fs.writeFileSync(path, buffer);
+    const fcmToken = 'eqnTqlxMTSKQL5NQz6r5aP:APA91bHa3CvL5Nlcqx2yzqTDAeqxm_L_vIYxXqehkgmTsCXrV29eAak6_jqXv5v1mQrdw4BGMLXl_BFNrJ67Em0vmdr3hQPVAYF8kR7RDtTRHQ08F3jLRRI'
 
-        // Confirmar el cambio con emojis
-        m.reply('✅ *¡Imagen del menú cambiada con éxito!* 😃📸');
+    const reg = await axios.put('https://musicai.apihub.today/api/v1/users', {
+      deviceId,
+      fcmToken
+}, { headers: registerHeaders})
 
-        // Enviar la nueva imagen del menú para confirmar el cambio
-        await conn.sendMessage(m.chat, { image: { url: path}, caption: '📌 *Nueva imagen del menú aplicada.*'});
+    const userId = reg.data.id
 
-} catch (error) {
-        console.error(error);
-        m.reply('⚠️ *Error:* No se pudo cambiar la imagen del menú. 🛑\n' + error.message);
+    const createHeaders = {
+...registerHeaders,
+      'x-client-id': userId
 }
-};
 
-handler.command = /^setmenu$/i;
+    const cuerpo = {
+      type: 'lyrics',
+      name: titulo,
+      lyrics: letra
+}
+    if (estado) cuerpo.mood = estado
+    if (genero) cuerpo.genre = genero
+    if (voz) cuerpo.gender = voz
+
+    const create = await axios.post('https://musicai.apihub.today/api/v1/song/create', cuerpo, { headers: createHeaders})
+    const idCancion = create.data.id
+
+    const checkHeaders = {
+...userHeaders,
+      'x-client-id': userId
+}
+
+    const esperar = ms => new Promise(resolve => setTimeout(resolve, ms))
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout})
+    let intentos = 0
+    let encontrada = null
+
+    while (true) {
+      const check = await axios.get('https://musicai.apihub.today/api/v1/song/user', {
+        params: {
+          userId,
+          isFavorite: false,
+          page: 1,
+          searchText: ''
+},
+        headers: checkHeaders
+})
+
+      encontrada = check.data.datas.find(song => song.id === idCancion)
+
+      if (!encontrada) {
+        rl.close()
+        return m.reply("⚠️ Parece que la canción aún no está lista.")
+}
+
+      readline.cursorTo(process.stdout, 0)
+      process.stdout.write(`🔄 [${++intentos}] Estado: ${encontrada.status} | Proceso: ${encontrada.url? '✅ Finalizado': '⏳ Generando...'}`)
+
+      if (encontrada.url) {
+        rl.close()
+
+        await conn.sendMessage(m.chat, {
+          audio: { url: encontrada.url},
+          mimetype: 'audio/mpeg',
+          fileName: `${encontrada.name}.mp3`,
+          ptt: false,
+          contextInfo: {
+            forwardingScore: 999999,
+            isForwarded: true,
+            externalAdReply: {
+              title: `Suno Music AI`,
+              body: `${encontrada.name} | Estado: ${encontrada.status}`,
+              mediaType: 1,
+              previewType: 0,
+              renderLargerThumbnail: true,
+              thumbnailUrl: encontrada.thumbnail_url,
+              sourceUrl: encontrada.url
+}
+}
+}, { quoted: m})
+
+        return
+}
+
+      await esperar(3000)
+}
+
+} catch (e) {
+    return m.reply(`❌ Error: ${e?.message || e}`)
+}
+}
+
+handler.command = ['sonu']
+handler.tags = ['inteligencia_artificial']
+handler.help = ['sonu <título | letra | estado | género | voz>']
+
 export default handler;

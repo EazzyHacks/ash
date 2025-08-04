@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 
 const handler = async (m, {conn, args, command, usedPrefix}) => {
@@ -40,7 +40,7 @@ if (!db.data.chats[m.chat].nsfw && m.isGroup) {
   }
 };
 handler.command = ['xnxxdl'];
-handler.register = true;
+handler.register = false;
 handler.group = false;
 export default handler;
 
